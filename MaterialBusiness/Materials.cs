@@ -1,18 +1,15 @@
 ﻿using System;
 namespace MaterialBusiness
 {
-    public class Fabric
+    public class Fabric : Item
     {
-        public Guid Id { get; private set; }
-        public string Name { get; set; }
-        public string Description { get; set; }
-
         // Essential metadata
-        public string MaterialType { get; set; }   // Cotton, Satin, Linen
-        public decimal WidthInMeters { get; set; } // Applies to sheets, rolls, trims
+        public string MaterialType { get; set; }
+        public decimal LengthInMeters { get; set; }
         public string Color { get; set; }
-        public decimal GSM { get; set; }           // optional, for fabrics
-        public string UnitOfMeasure { get; set; }  // meter, sheet, roll, unit
+        public decimal GSM { get; set; }
+        public string UnitOfMeasure { get; set; }
+       
         public enum FabricTypeEnum
         {
             Roll,
@@ -21,14 +18,11 @@ namespace MaterialBusiness
             Bulk
         }
         public FabricTypeEnum FabricType { get; set; }
-        // Pricing
         public decimal PricePerUnit { get; set; }
 
-        public Fabric(string name, FabricTypeEnum type)
+        public Fabric(string name, FabricTypeEnum type) : base(name, "")
         {
-            Id = Guid.NewGuid();
-            Name = name;
-           switch (type)
+            switch (type)
             {
                 case FabricTypeEnum.Roll:
                     UnitOfMeasure = "roll";
@@ -52,25 +46,28 @@ namespace MaterialBusiness
             }
         }
 
-        public decimal CalculatePrice(decimal quantity, decimal width)
+        public decimal CalculatePrice(decimal quantity, decimal additionalParam = 1)
         {
             if (FabricType == FabricTypeEnum.Bulk)
             {
-                decimal k = 0.02m;
-                double q = (double)quantity;
-                double kk =(double)k;
-                decimal minMultiplier = 0.65m;
-                decimal basePricePerUnit = PricePerUnit;
-                double effectiveUnitPriceDouble = (double) basePricePerUnit * Math.Exp(-kk * (q - 1));
+                // Your new economies of scale formula here
+                decimal maxDiscountPercent = 0.35m;
+                decimal minPriceMultiplier = 1m - maxDiscountPercent;
+                decimal discountRate = 0.02m;
 
-                decimal effectiveUnitPrice = (decimal)effectiveUnitPriceDouble;
-                    
-                effectiveUnitPrice= Math.Max(effectiveUnitPrice, basePricePerUnit * minMultiplier); ;
-                decimal total = effectiveUnitPrice * width * quantity;
-                return total;
+                double quantityDouble = (double)quantity;
+                double discountRateDouble = (double)discountRate;
+
+                double discountFactor = 1.0 - Math.Exp(-discountRateDouble * (quantityDouble - 1));
+                decimal discountPercent = Math.Min((decimal)discountFactor, maxDiscountPercent);
+
+                decimal discountedUnitPrice = PricePerUnit * (1m - discountPercent);
+                discountedUnitPrice = Math.Max(discountedUnitPrice, PricePerUnit * minPriceMultiplier);
+
+                return discountedUnitPrice * quantity;
             }
-            return PricePerUnit * quantity * width;
 
+            return PricePerUnit * quantity * LengthInMeters;
         }
     }
 

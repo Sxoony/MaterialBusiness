@@ -3,26 +3,27 @@ namespace MaterialBusiness
 {
     public class ItemRepository
     {
-        private Dictionary<Guid, Fabric> _items = new(); //Dictionary of a collection of Item objects, which contain name, description, unit of measure,
-                                                               //and other metadata (such as price per UOM)
-        public void Add(Fabric item)
+        private Dictionary<Guid, Item> _items = new(); // Changed from Fabric to Item
+
+        public void Add(Item item)
         {
             _items[item.Id] = item;
         }
 
-        public Fabric? Get(Guid id)
+        public Item? Get(Guid id)
         {
             return _items.TryGetValue(id, out var i) ? i : null;
         }
 
-        public IEnumerable<Fabric> GetAll()
+        public IEnumerable<Item> GetAll()
         {
             return _items.Values;
         }
 
-        public void Remove(Guid id)
+        // Get specific types
+        public IEnumerable<Fabric> GetAllFabrics()
         {
-            _items.Remove(id);
+            return _items.Values.OfType<Fabric>();
         }
     }
 }
