@@ -1,13 +1,17 @@
 ﻿using System;
+using System.ComponentModel.DataAnnotations;
 namespace MaterialBusiness
 {
     public class Fabric : Item
     {
         // Essential metadata
+        [MaxLength(100)]
         public string MaterialType { get; set; }
         public decimal LengthInMeters { get; set; }
+        [MaxLength(50)]
         public string Color { get; set; }
         public decimal GSM { get; set; }
+        [MaxLength(20)]
         public string UnitOfMeasure { get; set; }
        
         public enum FabricTypeEnum
@@ -19,9 +23,12 @@ namespace MaterialBusiness
         }
         public FabricTypeEnum FabricType { get; set; }
         public decimal PricePerUnit { get; set; }
-
-        public Fabric(string name, FabricTypeEnum type) : base(name, "")
+        public Fabric() : base()
         {
+        }
+        public Fabric(string name, FabricTypeEnum type) : base(name, name)
+        {
+
             switch (type)
             {
                 case FabricTypeEnum.Roll:

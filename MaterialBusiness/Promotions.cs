@@ -2,10 +2,13 @@
 using static MaterialBusiness.Fabric;
 using System;
 using System.Collections.Generic;
-using System.Linq;
+using System.ComponentModel.DataAnnotations;
 public class Promotion
 {
+    [Key]
     public Guid Id { get; set; } = Guid.NewGuid();
+    [Required]
+    [MaxLength(200)]
     public string Name { get; set; }
     public decimal DiscountPercent { get; set; } // e.g. 10 = 10% off
     public DateTime StartDate { get; set; }
@@ -18,10 +21,18 @@ public class Promotion
     MinimumQuantity,
     MinimumOrderAmount
 }
-
+    public string ProductIdsJson { get; set; } = "[]";
     // Conditions
     public PromotionConditionType ConditionType { get; set; }
-    public List<Guid>? ProductIds { get; set; } = new();      // For product-specific promos
+
+    [System.ComponentModel.DataAnnotations.Schema.NotMapped]
+    public List<Guid>? ProductIds
+    {
+        get => string.IsNullOrEmpty(ProductIdsJson)
+            ? new List<Guid>()
+            : System.Text.Json.JsonSerializer.Deserialize<List<Guid>>(ProductIdsJson);
+        set => ProductIdsJson = System.Text.Json.JsonSerializer.Serialize(value ?? new List<Guid>());
+    }
     public FabricTypeEnum? Category { get; set; }             // For category promotions
     public int? MinimumQuantity { get; set; }                 // For bulk-type promos
     public decimal? MinimumOrderAmount { get; set; }          // Order-total conditions

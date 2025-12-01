@@ -1,10 +1,14 @@
-﻿namespace MaterialBusiness
+﻿using MaterialBusiness;
+using System;
+using System.Linq;
+
+class Program
 {
-    internal class Program
+    static Business business;
+
+    static void Main(string[] args)
     {
-        static void Main(string[] args)
-        {
-            Console.WriteLine("Hello, World!");
-        }
+      
+
     }
 }
