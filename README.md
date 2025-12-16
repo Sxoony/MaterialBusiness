@@ -41,11 +41,17 @@ Or run dotnet run from the project directory
 
  
  Build **user interface** (console menu, later down the line transitioning to GUI)
+ 
  Add **input validation** (negative quantities, empty names, etc.)
+ 
  Implement **database integration** (SQLite + Entity Framework Core)
+ 
  Create sample data (if needed) and **test cases** (and possibly tests that verify correct business operations)
+ 
  Add reporting features (sales reports, low stock alerts) to create **business data**
+ 
  Manipulate business data to create **business intelligence** (from reports and logs as well as patterns or trends in that data)
+ 
 
  
 
