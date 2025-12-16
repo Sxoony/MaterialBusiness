@@ -28,7 +28,6 @@ Navigate: cd MaterialBusiness
 Setup:
 
 Open MaterialBusiness.sln in Visual Studio 2022 or later
-Restore NuGet packages (if any)
 
 
 ## Run:
@@ -40,14 +39,15 @@ Or run dotnet run from the project directory
 
 ## To Do
 
- Implement database integration (SQLite + Entity Framework Core)
- Add input validation (negative quantities, empty names, etc.)
- Create sample data and test scenarios in Main
- Build user interface (console menu or GUI)
- Add order cancellation and refund logic
- Implement multi-warehouse support
- Add reporting features (sales reports, low stock alerts)
- Create unit tests for business logic
+ 
+ Build **user interface** (console menu, later down the line transitioning to GUI)
+ Add **input validation** (negative quantities, empty names, etc.)
+ Implement **database integration** (SQLite + Entity Framework Core)
+ Create sample data (if needed) and **test cases** (and possibly tests that verify correct business operations)
+ Add reporting features (sales reports, low stock alerts) to create **business data**
+ Manipulate business data to create **business intelligence** (from reports and logs as well as patterns or trends in that data)
+
+ 
 
 ## Author
 Zamir Kruger
