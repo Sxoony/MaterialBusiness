@@ -44,7 +44,7 @@ Or run dotnet run from the project directory
  
  Add **input validation** (negative quantities, empty names, etc.)
  
- Implement **database integration** (SQLite + Entity Framework Core)
+ Implement **database integration** (SQLite + Entity Framework Core) - done through a DB file. integration with online DBMS' may come later.
  
  Create sample data (if needed) and **test cases** (and possibly tests that verify correct business operations)
  
