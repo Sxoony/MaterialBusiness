@@ -50,7 +50,7 @@ namespace MaterialBusiness
             _context.SaveChanges();
 
             // Log it
-            AuditLog.Log("StockReduced", itemId, item.Name,
+            AuditLog.Log("Stock Reduced", itemId, item.Name,
                 $"{reason}: Reduced from {oldQty} to {item.StockQuantity} (-{quantity})");
         }
 
@@ -66,7 +66,7 @@ namespace MaterialBusiness
             _context.SaveChanges();
 
             // Log it
-            AuditLog.Log("StockAdded", itemId, item.Name,
+            AuditLog.Log("Stock Added", itemId, item.Name,
                 $"{reason}: Increased from {oldQty} to {item.StockQuantity} (+{quantity})");
         }
       

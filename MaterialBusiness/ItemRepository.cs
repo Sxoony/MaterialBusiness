@@ -29,11 +29,26 @@ namespace MaterialBusiness
         }
 
         // GetAll: Reads all records from database
-        public IEnumerable<Fabric> GetAll()
+        public async IAsyncEnumerable<Fabric> GetAll()
         {
-            return _context.Fabrics.ToList();  // SELECT * FROM Fabrics
+            foreach (var fabric in _context.Fabrics)
+            {
+                yield return fabric;
+                
+            }
+            Task.Delay(200);
         }
+        public async Task ShowLoadingAsync(CancellationToken token)
+        {
+            int dots = 0;
 
+            while (!token.IsCancellationRequested)
+            {
+                dots = (dots % 3) + 1;
+                Console.Write($"\rLoading catalogue{new string('.', dots)}");
+                await Task.Delay(1000);
+            }
+        }
         // Remove: Deletes from database
         public void Remove(Guid id)
         {

@@ -5,7 +5,7 @@ using System.Linq;
 class Program
 {
     static Business localBusiness = new Business("Local Fabrics", "123 Main St");
-    static void FabricQueries()
+    static async Task FabricQueries()
     {
         bool finished = false;
         while (!finished)
@@ -23,10 +23,9 @@ class Program
                 case "1":
                     var fabrics = localBusiness.Items.GetAllFabrics();
                     Console.WriteLine("\n--- Fabrics ---");
-                    Console.WriteLine("Name\tID\tStock");
                     foreach (var fabric in fabrics)
                     {
-                        Console.WriteLine($"{fabric.Name}\t(ID: {fabric.Id})\tStock: {fabric.StockQuantity}");
+                        Console.WriteLine($"\n{fabric.Name} (ID: {fabric.Id}) - {fabric.Name} - Stock: {fabric.StockQuantity}");
                     }
                     Console.WriteLine();
                     break;
@@ -77,7 +76,7 @@ class Program
             }
         }
     }
-    static void OrderQueries()
+    static async Task OrderQueries()
     {
         bool finished = false;
         while (!finished)
@@ -120,37 +119,59 @@ class Program
                     Console.WriteLine();
                     break;
                 case "3":
+                    
                     List<OrderLine> lines = new List<OrderLine>();
                     string Item;
                     int Quantity;
-                    Console.WriteLine("Adding a new order. Enter the following details:");
-                    var fabrics = localBusiness.Items.GetAllFabrics().ToList();
-                    foreach (var fabric in fabrics)
+                    var cts = new CancellationTokenSource();
+                    var loadingTask = localBusiness.Items.ShowLoadingAsync(cts.Token);
+                    var fabrics = localBusiness.Items.GetAll();
+                    cts.Cancel();
+                    
+                    await foreach (var fabric in fabrics)
                     {
-                        Console.WriteLine($"{fabric.Name} (ID: {fabric.Id}) - {fabric.Name} - Stock: {fabric.StockQuantity}");
+                        Console.WriteLine($"\n{fabric.Name} (ID: {fabric.Id}) - {fabric.Name} - Stock: {fabric.StockQuantity}");
                     }
-                    Console.Write("Item ID: ");
-                    Item = Console.ReadLine() ?? "";
-                    if (Guid.TryParse(Item, out Guid itemId))
+                    Console.WriteLine("\nCatalogue Loaded!\n");
+                    Console.WriteLine("Adding a new order. Enter the following details:");
+                    bool add = true;
+                    while (add)
                     {
-                        var fabricItem = localBusiness.Items.Get(itemId);
-                        if (fabricItem != null)
+                        Console.Write("Item ID: ");
+                        Item = Console.ReadLine() ?? "";
+                        if (Guid.TryParse(Item, out Guid itemId))
                         {
-                            Console.Write("Quantity: ");
-                            Quantity = int.Parse(Console.ReadLine() ?? "0");
-
-                            lines.Add(new OrderLine(fabricItem, Quantity));
+                            var fabricItem = localBusiness.Items.Get(itemId);
+                            if (fabricItem != null)
+                            {
+                                Console.Write($"Quantity ({fabricItem.StockQuantity} available): ");
+                                Quantity = int.Parse(Console.ReadLine() ?? "0");
+                                if ((Quantity > fabricItem.StockQuantity) || (Quantity < 1))
+                                {
+                                    Console.WriteLine("Insufficient stock. Please enter a valid quantity.\n");
+                                    continue;
+                                }
                               
-                      
-                            localBusiness.Orders.Add(lines);
-                            Console.WriteLine("Order added successfully.\n");
+                                    lines.Add(new OrderLine(fabricItem, Quantity));
+                                  
+                                    localBusiness.ReduceStock(fabricItem.Id, Quantity, "Order Placement");
+
+                            }
+                            Console.WriteLine("Would you like to continue shopping? (y/n)");
+                            string response = Console.ReadLine() ?? "";
+                            if (response.ToLower() != "y")
+                            {
+                                add = false;
+                                localBusiness.Orders.Add(lines);
+                                Console.WriteLine("Order added successfully.\n");
+                            }
                         }
                         else
                         {
                             Console.WriteLine("Invalid Item ID.\n");
                         }
                     }
-
+  
                     break;
                 case "4":
                     Console.WriteLine("Enter OrderID: ");
@@ -182,10 +203,15 @@ class Program
                         break;
                 case "6":
                     Console.WriteLine("Enter OrderID: ");
-                    orderID = Console.ReadLine();
+                    orderID = Console.ReadLine()?? "";
                     if (Guid.TryParse(orderID, out Guid orderId3))
                     {
+                        foreach (var line in localBusiness.Orders.Get(orderID).Lines)
+                        {
+                            localBusiness.AddStock(line.Item.Id, line.Quantity, "Order Cancellation");
+                        }
                         localBusiness.Orders.Remove(orderID);
+
                         Console.WriteLine("Order successfully removed!");
                     }
                     else
@@ -203,7 +229,7 @@ class Program
         }
 
     }
-    static void Main(string[] args)
+    static async Task Main(string[] args)
     {
 
         Console.WriteLine($"===Welcome to {localBusiness.Name}, on {localBusiness.Address}!===\n");
@@ -220,10 +246,10 @@ class Program
             switch (choice)
             {
                 case "1":
-                    FabricQueries();
+                  await  FabricQueries();
                     break;
                 case "2":
-                    OrderQueries();
+                 await   OrderQueries();
                     break;
                 case "3":
                     // Implement PromotionQueries();

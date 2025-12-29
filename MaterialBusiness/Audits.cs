@@ -69,4 +69,12 @@ public class AuditRepository
             .Take(count)
             .ToList();
     }
+
+    public IEnumerable<AuditLog> GetLogsByDateRange (DateTime start, DateTime end)
+    {
+        return _context.AuditLogs.
+            Where(l=>l.Timestamp>=start&&l.Timestamp<=end).
+            OrderByDescending(l=>l.Timestamp).
+            ToList();
+    }
 }
