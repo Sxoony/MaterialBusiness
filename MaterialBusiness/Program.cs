@@ -140,8 +140,8 @@ class Program
                             Quantity = int.Parse(Console.ReadLine() ?? "0");
 
                             lines.Add(new OrderLine(fabricItem, Quantity));
-                              
-                      
+
+
                             localBusiness.Orders.Add(lines);
                             Console.WriteLine("Order added successfully.\n");
                         }
@@ -171,15 +171,15 @@ class Program
                     break;
                 case "5":
                     Console.WriteLine("Enter OrderID: ");
-                     orderID = Console.ReadLine();
+                    orderID = Console.ReadLine();
                     if (Guid.TryParse(orderID, out Guid orderId2))
                     {
-                        
-                            localBusiness.Orders.Update(orderID);
-                        
+
+                        localBusiness.Orders.Update(orderID);
+
 
                     }
-                        break;
+                    break;
                 case "6":
                     Console.WriteLine("Enter OrderID: ");
                     orderID = Console.ReadLine();
@@ -192,7 +192,7 @@ class Program
                     {
                         Console.WriteLine("Invalid Input");
                     }
-                        break;
+                    break;
                 case "7":
                     finished = true;
                     break;
@@ -205,54 +205,86 @@ class Program
     }
     static void Main(string[] args)
     {
+        Console.WriteLine("=== MaterialBusiness - Database Setup ===\n");
 
-        Console.WriteLine($"===Welcome to {localBusiness.Name}, on {localBusiness.Address}!===\n");
-        bool finished = false;
-        while (!finished)
+        // Check if database is already seeded
+        var existingItems = localBusiness.Items.GetAll();
+
+        if (!existingItems.Any())
         {
-            Console.WriteLine("Select an option:");
-            Console.WriteLine("1. Fabric Queries");
-            Console.WriteLine("2. Order Queries");
-            Console.WriteLine("3. Promotion Queries");
-            Console.WriteLine("4. Audit Log Queries");
-            Console.WriteLine("5. Exit\n");
-            string choice = Console.ReadLine() ?? "";
-            switch (choice)
+            Console.WriteLine("Database is empty. Seeding with dummy data...\n");
+
+            var seeder = new DataSeeder(localBusiness);
+            seeder.SeedAll();
+        }
+        else
+        {
+            Console.WriteLine($"Database already contains {existingItems.Count()} items.");
+            Console.WriteLine("Do you want to clear and reseed? (y/n)");
+
+            var response = Console.ReadLine()?.ToLower();
+
+            if (response == "y")
             {
-                case "1":
-                    FabricQueries();
-                    break;
-                case "2":
-                    OrderQueries();
-                    break;
-                case "3":
-                    // Implement PromotionQueries();
-                    break;
-                case "4":
-                    // Implement AuditLogQueries();
-                    break;
-                case "5":
-                    finished = true;
-                    break;
-                default:
-                    Console.WriteLine("Invalid choice. Please try again.\n");
-                    break;
+                Console.WriteLine("\nClearing existing data...");
+                // You'd need to add methods to clear data, or just delete business.db and restart
+                Console.WriteLine("Please delete business.db manually and restart the application.");
+                return;
+            }
+            Console.WriteLine($"===Welcome to {localBusiness.Name}, on {localBusiness.Address}!===\n");
+            bool finished = false;
+            while (!finished)
+            {
+                Console.WriteLine("Select an option:");
+                Console.WriteLine("1. Fabric Queries");
+                Console.WriteLine("2. Order Queries");
+                Console.WriteLine("3. Promotion Queries");
+                Console.WriteLine("4. Audit Log Queries");
+                Console.WriteLine("5. Exit\n");
+                string choice = Console.ReadLine() ?? "";
+                switch (choice)
+                {
+                    case "1":
+                        FabricQueries();
+                        break;
+                    case "2":
+                        OrderQueries();
+                        break;
+                    case "3":
+                        // Implement PromotionQueries();
+                        break;
+                    case "4":
+                        // Implement AuditLogQueries();
+                        break;
+                    case "5":
+                        finished = true;
+                        break;
+                    default:
+                        Console.WriteLine("Invalid choice. Please try again.\n");
+                        break;
+                }
+
+                //ORDER QUERIES
+
+
+
+
+                //PROMOTION QUERIES
+
+
+
+                //AUDIT LOG QUERIES
+
+
+
             }
 
-            //ORDER QUERIES
-
-
-
-
-            //PROMOTION QUERIES
-
-
-
-            //AUDIT LOG QUERIES
 
 
 
         }
-      
     }
 }
+
+
+    
