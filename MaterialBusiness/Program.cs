@@ -150,12 +150,6 @@ class Program
                             Console.WriteLine("Invalid Item ID.\n");
                         }
                     }
-                    else
-                    {
-                        Console.WriteLine("Invalid Item ID format.\n");
-                    }
-
-
 
                     break;
                 case "4":
